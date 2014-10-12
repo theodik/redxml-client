@@ -1,5 +1,7 @@
 # Redxml::Client
 
+[![Build Status](https://travis-ci.org/theodik/redxml-client.svg)](https://travis-ci.org/theodik/redxml-client)
+
 ## Installation
 
 Add this line to your application's Gemfile:

@@ -1,6 +1,6 @@
 # Redxml::Client
 
-[![Build Status](https://travis-ci.org/theodik/redxml-client.svg)](https://travis-ci.org/theodik/redxml-client)
+[![Build Status](https://travis-ci.org/theodik/redxml-client.svg)](https://travis-ci.org/theodik/redxml-client) [![Coverage Status](https://coveralls.io/repos/theodik/redxml-client/badge.png)](https://coveralls.io/r/theodik/redxml-client)
 
 ## Installation
 

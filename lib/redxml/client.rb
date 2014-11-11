@@ -1,4 +1,5 @@
 require 'redxml/client/connection'
+require 'redxml/client/repl'
 require 'redxml/client/version'
 
 module RedXML
@@ -14,12 +15,11 @@ module RedXML
 
     def self.connect(options, &block)
       client = new(options)
-      client.connect
       if block_given?
         begin
           block.call(client)
         ensure
-          client.disconnect
+          client.close
         end
       end
       client
@@ -27,26 +27,29 @@ module RedXML
 
     attr_reader :connection
 
-    def initialize(options)
-      @options = parse_options(options = {})
-    end
-
-    def execute(xquery)
-      connection.write(:execute, xquery)
-    end
-
-    def connect
-      fail 'Already connected' if @connection
+    def initialize(options = {})
+      @options = parse_options(options)
       @connection = establish_connection
     end
 
-    def disconnect
-      connection.disconnect if connection
-      @connection = nil
+    def execute(xquery)
+      connection.send(:execute, xquery)
     end
 
-    def disconnected?
-      connection.nil?
+    def ping
+      connection.send(:ping)
+    end
+
+    def close
+      connection.close unless closed?
+    end
+
+    def closed?
+      connection.closed?
+    end
+
+    def server_version
+      connection.server_version
     end
 
     private
@@ -62,9 +65,7 @@ module RedXML
     def establish_connection
       # driver_class = RedXML::Client::Connection.drivers[schema]
       # driver = driver_class.new
-      connection = RedXML::Client::Connection.new(@options)
-      connection.connect
-      connection
+      RedXML::Client::Connection.new(@options)
     end
   end
 end

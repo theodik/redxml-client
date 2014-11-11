@@ -18,7 +18,22 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'redxml/client'
+
+# Connect as a block
+RedXML::Client.connect(host: 'localhost', port: 33965) do |client|
+  result = client.execute '//test'
+  result.each do |tag|
+    puts tag
+  end
+end
+
+# Create client without block
+client = RedXML::Client.connect(host: 'localhost', port: 33965)
+puts client.execute '//test'
+client.close
+```
 
 ## Contributing
 

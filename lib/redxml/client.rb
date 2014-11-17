@@ -32,8 +32,9 @@ module RedXML
       @connection = establish_connection
     end
 
-    def execute(xquery)
-      connection.send(:execute, xquery)
+    def execute(env, col, xquery)
+      param = [env, col, xquery].join("\1")
+      connection.send(:execute, param)
     end
 
     def ping

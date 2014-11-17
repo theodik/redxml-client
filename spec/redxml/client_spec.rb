@@ -9,7 +9,7 @@ RSpec.describe RedXML::Client do
     allow(conn).to receive(:new).with(any_args).and_return(@conn_double)
   end
 
-  describe '.connect' do
+  describe '::connect' do
     it 'returns client' do
       client = RedXML::Client.connect(options)
       expect(client).to be_a RedXML::Client
@@ -48,8 +48,8 @@ RSpec.describe RedXML::Client do
 
     describe '#execute' do
       it 'returns result' do
-        expect(@conn_double).to receive(:send).with(:execute, '/.')
-        subject.execute('/.')
+        expect(@conn_double).to receive(:send).with(:execute, "test_env\1test_col\1/.")
+        subject.execute('test_env', 'test_col', '/.')
       end
     end
 

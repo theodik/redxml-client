@@ -87,9 +87,17 @@ RSpec.describe RedXML::Client::Connection do
 
       response = subject.send(command, param)
 
-      expect(response).to be_a(RedXML::Protocol::Packet)
-      expect(response.command).to eq command
-      expect(response.param).to eq param
+      expect(response).to eq param
+    end
+
+    it 'fails with error response' do
+      subject.driver.response = RedXML::Protocol::PacketBuilder
+                                .execute('test')
+                                .error('test error message')
+                                .data
+      expect {
+        subject.send(:execute, 'test')
+      }.to raise_error(RedXML::Client::ServerError, 'test error message')
     end
   end
 
@@ -101,7 +109,7 @@ RSpec.describe RedXML::Client::Connection do
     it 'pings' do
       subject.driver.response = RedXML::Protocol::PacketBuilder.ping.data
       response = subject.send(:ping)
-      expect(response.command).to eq :ping
+      expect(response).to eq ''
     end
   end
 end

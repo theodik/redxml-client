@@ -2,6 +2,9 @@ require 'redxml/protocol'
 
 module RedXML
   class Client
+    class ServerError < RuntimeError
+    end
+
     class Connection
       @drivers = {}
 
@@ -25,8 +28,12 @@ module RedXML
           .command(command)
           .param(param)
           .build
+
         driver.write(packet)
-        driver.read
+
+        packet = driver.read
+        fail ServerError, packet.param if packet.error?
+        packet.param
       end
 
       def close

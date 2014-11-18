@@ -1,9 +1,12 @@
 require 'redxml/client/connection'
 require 'redxml/client/repl'
+require 'redxml/client/dsl'
 require 'redxml/client/version'
 
 module RedXML
   class Client
+    include DSL
+
     DEFAULTS = {
       url: -> { ENV['REDXML_URL'] },
       scheme: 'tcp',
@@ -32,25 +35,12 @@ module RedXML
       @connection = establish_connection
     end
 
-    def execute(env, col, xquery)
-      param = [env, col, xquery].join("\1")
-      connection.send(:execute, param)
-    end
-
-    def ping
-      connection.send(:ping)
-    end
-
     def close
       connection.close unless closed?
     end
 
     def closed?
       connection.closed?
-    end
-
-    def server_version
-      connection.server_version
     end
 
     private

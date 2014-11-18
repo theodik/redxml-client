@@ -13,7 +13,7 @@ class TestDriver
   end
 
   def socket
-    StringIO.new(@response)
+    StringIO.new(@response.dup)
   end
 
   def address

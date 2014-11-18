@@ -35,29 +35,4 @@ RSpec.describe RedXML::Client do
       expect(client).to be_closed
     end
   end
-
-  context 'with options' do
-    subject { RedXML::Client.connect(options) }
-
-    describe '#server_version' do
-      it 'returns connected server version' do
-        expect(@conn_double).to receive(:server_version).and_return('Test-0.0.1')
-        expect(subject.server_version).to eq 'Test-0.0.1'
-      end
-    end
-
-    describe '#execute' do
-      it 'returns result' do
-        expect(@conn_double).to receive(:send).with(:execute, "test_env\1test_col\1/.")
-        subject.execute('test_env', 'test_col', '/.')
-      end
-    end
-
-    describe '#ping' do
-      it 'pings' do
-        expect(@conn_double).to receive(:send).with(:ping)
-        subject.ping
-      end
-    end
-  end
 end

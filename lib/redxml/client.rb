@@ -31,8 +31,15 @@ module RedXML
     attr_reader :connection
 
     def initialize(options = {})
-      @options = parse_options(options)
-      @connection = establish_connection
+      @options     = parse_options(options)
+      @connection  = establish_connection
+      @environment = @collection = nil
+    end
+
+    def use(env, col)
+      @environment = env
+      @collection  = col
+      'OK'
     end
 
     def close
@@ -44,6 +51,12 @@ module RedXML
     end
 
     private
+
+    def check_environment
+      if @environment.nil? && @collection.nil?
+        fail 'No environment and collection chosen'
+      end
+    end
 
     def parse_options(options)
       options = DEFAULTS.dup.merge(options)

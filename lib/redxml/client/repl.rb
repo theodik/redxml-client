@@ -8,6 +8,7 @@ module RedXML
       def initialize(client)
         @client = client
         @stty   = `stty -g`.chomp
+        load_history
       end
 
       def repl
@@ -17,16 +18,31 @@ module RedXML
             catch :next do
               line = prompt
               command, param = parse line
-              response = execute command, param
-              write_response response
+              write execute(command, param)
             end
           end
         end
         client.close
         write "Bye."
+        write_history
       end
 
       private
+
+      def load_history
+        hist_file = File.expand_path('~/.redxml-hist')
+        return unless File.exists? hist_file
+        File.open(hist_file).each_line.map(&:chomp).reject(&:empty?).each do |line|
+          Readline::HISTORY << line
+        end
+      end
+
+      def write_history
+        hist_file = File.expand_path('~/.redxml-hist')
+        File.open(hist_file, 'w') do |f|
+          f.write Readline::HISTORY.to_a.uniq.join("\n")
+        end
+      end
 
       def write_header
         write <<-EOD.gsub(/^\s+/,''), ''
@@ -36,7 +52,7 @@ module RedXML
 
       def prompt
         line = Readline.readline('redxml> ', true)
-        write '' and throw :quit if line.nil?
+        write('') and throw :quit if line.nil?
         throw :quit if line.strip =~ /^quit/
         throw :next if line.strip.empty?
         line
@@ -57,26 +73,16 @@ module RedXML
       end
 
       def execute(command, param)
-        args = [command, param].compact
-        client.public_send(*args)
-      end
-
-      def write_response(response)
-        write("\n") and return if response.nil?
-        write response and return unless response.is_a? RedXML::Protocol::Packet
-
-        case response.command
-        when :execute
-          write response.param
-        when :ping
-          write "\tpong"
-        else
-          write "  #{response.command}: #{response.param}"
-        end
+        method = client.method(command)
+        params = param.split(/\s/, method.arity)
+        method.call(*params)
+      rescue RedXML::Client::ServerError => e
+        "ERROR: #{e}"
       end
 
       def write(obj, eol = "\n")
-        $stdin.write(obj.to_s + eol)
+        printf("%s%s", obj.to_s, eol)
+        true
       end
     end
   end

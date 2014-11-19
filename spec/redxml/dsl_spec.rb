@@ -20,7 +20,8 @@ RSpec.describe RedXML::Client do
   describe '#execute' do
     it 'returns result' do
       expect(@conn_double).to receive(:send).with(:execute, "test_env\1test_col\1/.")
-      subject.execute('test_env', 'test_col', '/.')
+      subject.use('test_env', 'test_col')
+      subject.execute('/.')
     end
   end
 
@@ -40,7 +41,8 @@ RSpec.describe RedXML::Client do
       document_name = File.basename(file.path)
       expect(@conn_double).to receive(:send).with(:save_document, "test_env\1test_col\1#{document_name}\1<xml>test</xml>")
 
-      subject.save_document('test_env', 'test_col', file.path)
+      subject.use('test_env', 'test_col')
+      subject.save_document(file.path)
 
       file.unlink
     end
@@ -53,7 +55,8 @@ RSpec.describe RedXML::Client do
 
       expect(@conn_double).to receive(:send).with(:load_document, "test_env\1test_col\1#{document_name}") { '<xml>test</xml>' }
 
-      subject.load_document('test_env', 'test_col', document_name, file_name)
+      subject.use('test_env', 'test_col')
+      subject.load_document(document_name, file_name)
 
       document = File.open(file_name, &:read)
       expect(document).to eq "<xml>test</xml>\n"
@@ -65,7 +68,8 @@ RSpec.describe RedXML::Client do
       document_name = 'test_document.xml'
       expect(@conn_double).to receive(:send).with(:load_document, "test_env\1test_col\1#{document_name}") { '<xml>test</xml>' }
 
-      document = subject.load_document('test_env', 'test_col', document_name)
+      subject.use('test_env', 'test_col')
+      document = subject.load_document(document_name)
 
       expect(document).to eq '<xml>test</xml>'
     end

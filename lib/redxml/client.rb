@@ -16,7 +16,7 @@ module RedXML
       db: 0
     }.freeze
 
-    def self.connect(options, &block)
+    def self.connect(options = {}, &block)
       client = new(options)
       if block_given?
         begin

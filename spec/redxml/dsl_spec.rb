@@ -32,6 +32,27 @@ RSpec.describe RedXML::Client do
     end
   end
 
+  describe '#begin' do
+    it 'sends begin transaction' do
+      expect(@conn_double).to receive(:send).with(:begin)
+      subject.begin
+    end
+  end
+
+  describe '#commit' do
+    it 'sends commit transaction' do
+      expect(@conn_double).to receive(:send).with(:commit)
+      subject.commit
+    end
+  end
+
+  describe '#rollback' do
+    it 'sends rollback transaction' do
+      expect(@conn_double).to receive(:send).with(:rollback)
+      subject.rollback
+    end
+  end
+
   describe '#save_document' do
     it 'loads file' do
       file = Tempfile.new(['test_document', '.xml'])

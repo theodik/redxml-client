@@ -111,5 +111,23 @@ RSpec.describe RedXML::Client::Connection do
       response = subject.send(:ping)
       expect(response).to eq ''
     end
+
+    it 'begins' do
+      subject.driver.response = RedXML::Protocol::PacketBuilder.begin.data
+      response = subject.send(:begin)
+      expect(response).to eq ''
+    end
+
+    it 'commits' do
+      subject.driver.response = RedXML::Protocol::PacketBuilder.commit.data
+      response = subject.send(:commit)
+      expect(response).to eq ''
+    end
+
+    it 'rollbacks' do
+      subject.driver.response = RedXML::Protocol::PacketBuilder.rollback.data
+      response = subject.send(:rollback)
+      expect(response).to eq ''
+    end
   end
 end

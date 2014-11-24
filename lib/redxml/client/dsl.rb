@@ -9,6 +9,18 @@ module RedXML
         connection.server_version
       end
 
+      def begin
+        connection.send(:begin)
+      end
+
+      def commit
+        connection.send(:commit)
+      end
+
+      def rollback
+        connection.send(:rollback)
+      end
+
       def execute(xquery)
         check_environment
 
